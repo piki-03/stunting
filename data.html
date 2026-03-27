@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Riwayat Anak</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<style>
+.table tbody tr:hover{
+    background:#f8fbff;
+    transition:0.3s;
+}
+.badge-status{
+    font-size:13px;
+    padding:6px 12px;
+    border-radius:20px;
+}
+.nav-item{
+    font-size:12px;
+}
+.nav-item.active{
+    color:#0d6efd !important;
+    font-weight:600;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header text-center">
+    <h5><i class="bi bi-bar-chart-fill"></i> Data Riwayat Anak</h5>
+    <div class="subtext">Monitoring History Penimbangan</div>
+</div>
+
+<div class="container mt-3">
+
+    <!-- PROFILE -->
+    <div class="card-pro d-flex align-items-center profile">
+        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+        <div class="ms-3">
+            <b id="nama">Nama Anak</b><br>
+            <small id="umur">Umur</small><br>
+            <small id="tgl">Tanggal Lahir</small><br>
+            <small class="text-muted">UID: <span id="uid">-</span></small>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="card-pro mt-3 d-flex justify-content-between align-items-center">
+        <b><i class="bi bi-clock-history"></i> Riwayat Penimbangan</b>
+
+        <div class="dropdown">
+            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-download"></i> Download
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li>
+                    <a class="dropdown-item" href="#" onclick="downloadPDF()">
+                        <i class="bi bi-file-earmark-pdf text-danger"></i> PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" onclick="downloadExcel()">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Excel
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card-pro mt-3">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th><i class="bi bi-person"></i> Nama</th>
+                        <th><i class="bi bi-hourglass"></i> Umur</th>
+                        <th><i class="bi bi-calendar"></i></th>
+                        <th><i class="bi bi-arrows-vertical"></i></th>
+                        <th><i class="bi bi-speedometer2"></i></th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="safe"></div>
+
+<!-- NAV -->
+<div class="bottom-nav py-2">
+    <div class="d-flex justify-content-around">
+        <a href="index.html" class="nav-item text-decoration-none text-dark text-center">
+            <i class="bi bi-house fs-5"></i><br>Home
+        </a>
+        <a href="data.html" class="nav-item active text-decoration-none text-dark text-center">
+            <i class="bi bi-bar-chart fs-5"></i><br>Data
+        </a>
+    </div>
+</div>
+
+<!-- SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script>
+
+// ================= DATA =================
+let dataAnak = {
+    nama:"Budi",
+    umur:12,
+    tgl:"01 Januari 2025",
+    uid:"UD176B"
+};
+
+let dataHistory = [
+    {tanggal:"2026-01-01", tinggi:50, berat:1},
+    {tanggal:"2026-02-01", tinggi:60, berat:2},
+    {tanggal:"2026-03-01", tinggi:70, berat:3}
+];
+
+// ================= STATUS =================
+function hitungStatus(tinggi){
+    if (tinggi < 60) return "Stunting Berat";
+    if (tinggi < 75) return "Stunting Ringan";
+    return "Normal";
+}
+
+// ================= LOAD PROFILE =================
+function loadProfile(){
+    document.getElementById("nama").innerText = dataAnak.nama;
+    document.getElementById("umur").innerText = dataAnak.umur + " bulan";
+    document.getElementById("tgl").innerText = dataAnak.tgl;
+    document.getElementById("uid").innerText = dataAnak.uid;
+}
+
+// ================= LOAD TABLE =================
+function loadTable(){
+    let table = document.getElementById("dataTable");
+    let html = "";
+
+    dataHistory.forEach((d,i)=>{
+        let status = hitungStatus(d.tinggi);
+
+        let warna = "secondary";
+        if(status==="Normal") warna="success";
+        else if(status==="Stunting Ringan") warna="warning text-dark";
+        else warna="danger";
+
+        html += `
+        <tr>
+            <td>${i+1}</td>
+            <td>${dataAnak.nama}</td>
+            <td>${dataAnak.umur} bln</td>
+            <td>${d.tanggal}</td>
+            <td>${d.tinggi} cm</td>
+            <td>${d.berat} kg</td>
+            <td><span class="badge badge-status bg-${warna}">${status}</span></td>
+        </tr>`;
+    });
+
+    table.innerHTML = html;
+}
+
+loadProfile();
+loadTable();
+
+// ================= DOWNLOAD PDF =================
+function downloadPDF(){
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text("Data Riwayat Anak", 10, 10);
+
+    let y = 20;
+    dataHistory.forEach((d,i)=>{
+        let status = hitungStatus(d.tinggi);
+
+        doc.text(
+            `${i+1}. ${dataAnak.nama} | ${dataAnak.umur} bln | ${d.tanggal} | ${d.tinggi} cm | ${d.berat} kg | ${status}`,
+            10, y
+        );
+        y += 10;
+    });
+
+    doc.save("data-anak.pdf");
+}
+
+// ================= DOWNLOAD EXCEL =================
+function downloadExcel(){
+    let exportData = dataHistory.map(d => ({
+        nama: dataAnak.nama,
+        umur: dataAnak.umur,
+        tanggal: d.tanggal,
+        tinggi: d.tinggi,
+        berat: d.berat,
+        status: hitungStatus(d.tinggi)
+    }));
+
+    let ws = XLSX.utils.json_to_sheet(exportData);
+    let wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "Data Anak");
+    XLSX.writeFile(wb, "data-anak.xlsx");
+}
+
+</script>
+
+</body>
+</html>

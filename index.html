@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Stunting</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<style>
+.badge-status{
+    font-size:14px;
+    padding:8px 15px;
+    border-radius:20px;
+}
+
+.rekom-item{
+    padding:10px;
+    border-radius:10px;
+    background:#f8f9fa;
+    margin-bottom:8px;
+}
+.nav-item{
+    font-size:12px;
+}
+
+.nav-item.active{
+    color:#0d6efd !important;
+    font-weight:600;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header text-center">
+    <h5><i class="bi bi-heart-pulse-fill"></i> Monitoring Stunting</h5>
+    <div class="subtext">Smart IoT Growth System</div>
+</div>
+
+<div class="container mt-3">
+
+    <!-- PROFILE -->
+    <div class="card-pro d-flex align-items-center profile">
+        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+        <div class="ms-3">
+            <b id="nama">Nama Anak</b><br>
+            <small id="umur">Umur • Kota</small><br>
+            <small id="ortu">Orang Tua</small><br>
+            <small class="text-muted">UID: <span id="uid">-</span></small>
+        </div>
+    </div>
+
+    <!-- DATA -->
+    <div class="row mt-3 g-3">
+
+        <div class="col-6">
+            <div class="card-pro text-center">
+                <div class="icon-box bg-primary">
+                    <i class="bi bi-arrows-vertical text-white"></i>
+                </div>
+                <small>Tinggi</small>
+                <h4 id="tinggi">0 cm</h4>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="card-pro text-center">
+                <div class="icon-box bg-success">
+                    <i class="bi bi-speedometer2 text-white"></i>
+                </div>
+                <small>Berat</small>
+                <h4 id="berat">0 kg</h4>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="card-pro mt-3 text-center">
+        <b>Status Anak</b><br>
+        <span id="status" class="badge badge-status bg-secondary mt-2">-</span>
+    </div>
+
+    <!-- REKOMENDASI -->
+    <div class="card-pro mt-3">
+        <b>📋 Rekomendasi</b>
+        <div id="rekomendasiBox" class="mt-2">
+            <div class="text-muted">Belum ada data</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MAKANAN BERGIZI -->
+<div class="card-pro mt-3">
+    <b>🥗 Makanan Bergizi</b>
+
+    <div class="table-responsive mt-2">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Icon</th>
+                    <th>Jenis Makanan</th>
+                    <th>Manfaat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="bi bi-egg-fried text-warning fs-4"></i></td>
+                    <td>Telur</td>
+                    <td>Sumber protein tinggi untuk pertumbuhan</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-water text-primary fs-4"></i></td>
+                    <td>Susu</td>
+                    <td>Mengandung kalsium untuk tulang</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-droplet-half text-danger fs-4"></i></td>
+                    <td>Daging</td>
+                    <td>Zat besi untuk mencegah anemia</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-flower1 text-success fs-4"></i></td>
+                    <td>Sayuran</td>
+                    <td>Vitamin & serat untuk daya tahan tubuh</td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-apple text-danger fs-4"></i></td>
+                    <td>Buah</td>
+                    <td>Sumber vitamin alami</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="safe"></div>
+
+<!-- NAV -->
+<div class="bottom-nav py-2">
+    <div class="d-flex justify-content-around">
+        <a href="index.html" class="nav-item active text-decoration-none text-dark text-center">
+            <i class="bi bi-house fs-5"></i><br>Home
+        </a>
+
+        <a href="data.html" class="nav-item text-decoration-none text-dark text-center">
+            <i class="bi bi-bar-chart fs-5"></i><br>Data
+        </a>
+    </div>
+</div>
+
+<script>
+
+function hitungStatus(tinggi){
+    if (tinggi < 60) return "Stunting Berat";
+    if (tinggi < 75) return "Stunting Ringan";
+    return "Normal";
+}
+
+function tampilkanStatus(status){
+    const el = document.getElementById("status");
+
+    el.innerText = status;
+    el.className = "badge badge-status mt-2";
+
+    if(status === "Normal"){
+        el.classList.add("bg-success");
+    } 
+    else if(status === "Stunting Ringan"){
+        el.classList.add("bg-warning","text-dark");
+    } 
+    else{
+        el.classList.add("bg-danger");
+    }
+
+    tampilkanRekomendasi(status);
+}
+
+function tampilkanRekomendasi(status){
+    const box = document.getElementById("rekomendasiBox");
+
+    let data = [];
+
+    if(status === "Normal"){
+        data = [
+            "Pertahankan pola makan sehat",
+            "ASI & MPASI seimbang",
+            "Kontrol rutin ke posyandu"
+        ];
+    } 
+    else if(status === "Stunting Ringan"){
+        data = [
+            "Tambahkan protein (telur, ikan)",
+            "Minum susu pertumbuhan",
+            "Pantau perkembangan tiap bulan"
+        ];
+    } 
+    else{
+        data = [
+            "Segera konsultasi dokter",
+            "Perbaiki gizi tinggi protein",
+            "Berikan suplemen sesuai anjuran",
+            "Pantauan intensif"
+        ];
+    }
+
+    let html = "";
+    data.forEach(item=>{
+        html += `<div class="rekom-item">✔ ${item}</div>`;
+    });
+
+    box.innerHTML = html;
+}
+
+function updateUI(data){
+    document.getElementById("nama").innerText = data.nama;
+    document.getElementById("umur").innerText = data.umur + " bulan";
+    document.getElementById("ortu").innerText = data.ortu;
+    document.getElementById("uid").innerText = data.uid;
+
+    document.getElementById("tinggi").innerText = data.tinggi + " cm";
+    document.getElementById("berat").innerText = data.berat + " kg";
+
+    let status = hitungStatus(data.tinggi);
+    tampilkanStatus(status);
+}
+
+let dataAnak = {
+    nama:"Budi",
+    umur:12,
+    ortu:"Ibu Siti",
+    uid:"UD176B",
+    tinggi:50,
+    berat:1
+};
+
+updateUI(dataAnak);
+
+</script>
+
+</body>
+</html>
